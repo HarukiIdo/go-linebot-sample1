@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HarukiIdo/go-linebot-sample1/service"
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
 
@@ -47,6 +48,8 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 				if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMessage)).Do(); err != nil {
 					log.Print(err)
 				}
+			case *linebot.LocationMessage:
+				service.SendResttoInfo(bot, event)
 			}
 		}
 	}
