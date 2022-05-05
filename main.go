@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -17,7 +16,9 @@ func main() {
 
 	fmt.Println("http://localhost:8080で起動中...")
 
-	// HTTPサーバを起動
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	port := os.Getenv("PORT")
+	addr := ":" + port
 
+	// HTTPサーバを起動
+	http.ListenAndServe(addr, nil)
 }

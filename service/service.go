@@ -54,7 +54,6 @@ func getRestoInfo(lat string, lng string) []*linebot.CarouselColumn {
 	}
 
 	var ccs []*linebot.CarouselColumn
-
 	for _, shop := range data.Results.Shop {
 		addr := shop.Address
 
@@ -64,12 +63,14 @@ func getRestoInfo(lat string, lng string) []*linebot.CarouselColumn {
 			addr = string([]rune(addr)[:60])
 		}
 
+		fmt.Println(shop.Photo.Mobile.URL)
+
 		cc := linebot.NewCarouselColumn(
 			shop.Photo.Mobile.URL,
 			shop.Name,
 			addr,
 			linebot.NewURIAction("ホットペッパーを開く", shop.URLs.PC),
-		).WithImageOptions("#FFFFEE")
+		).WithImageOptions("#225588")
 		ccs = append(ccs, cc)
 	}
 	return ccs

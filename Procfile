@@ -1,0 +1,1 @@
+web: bin/go-linebot-sample1
