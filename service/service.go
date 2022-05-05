@@ -69,7 +69,7 @@ func getRestoInfo(lat string, lng string) []*linebot.CarouselColumn {
 			shop.Name,
 			addr,
 			linebot.NewURIAction("ホットペッパーを開く", shop.URLs.PC),
-		).WithImageOptions("#FFFFF")
+		).WithImageOptions("#FFFFEE")
 		ccs = append(ccs, cc)
 	}
 	return ccs
