@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/HarukiIdo/go-linebot-sample1/model"
 	"github.com/line/line-bot-sdk-go/v7/linebot"
@@ -19,15 +20,19 @@ func SendResttoInfo(bot *linebot.Client, e *linebot.Event) {
 	lat := strconv.FormatFloat(msg.Latitude, 'f', 2, 64)
 	lng := strconv.FormatFloat(msg.Longitude, 'f', 2, 64)
 
-	replyMsg := fmt.Sprintf("緯度：%s\n軽度：%s", lat, lng)
-	replyMsg = getRestoInfo(lat, lng)
+	replyMsg := getRestoInfo(lat, lng)
 
-	if _, err := bot.ReplyMessage(e.ReplyToken, linebot.NewTextMessage(replyMsg)).Do(); err != nil {
+	res := linebot.NewTemplateMessage(
+		"レストラン一覧",
+		linebot.NewCarouselTemplate(replyMsg...).WithImageOptions("rectangle", "cover"),
+	)
+
+	if _, err := bot.ReplyMessage(e.ReplyToken, res).Do(); err != nil {
 		log.Println(err)
 	}
 }
 
-func getRestoInfo(lat string, lng string) string {
+func getRestoInfo(lat string, lng string) []*linebot.CarouselColumn {
 	apiKey := os.Getenv("APIKEY")
 	url := fmt.Sprintf("http://webservice.recruit.co.jp/hotpepper/gourmet/v1/?format=json&key=%s&lat=%s&lng=%s", apiKey, lat, lng)
 
@@ -48,10 +53,24 @@ func getRestoInfo(lat string, lng string) string {
 		log.Fatal(err)
 	}
 
-	info := ""
+	var ccs []*linebot.CarouselColumn
 
 	for _, shop := range data.Results.Shop {
-		info += shop.Name + "\n" + shop.Address + "\n\n"
+		addr := shop.Address
+
+		// ホットペッパーの住所欄が60文字以内という制限があるため
+		// 61文字以上ある場合はそれ以降をカットする
+		if 60 < utf8.RuneCountInString(addr) {
+			addr = string([]rune(addr)[:60])
+		}
+
+		cc := linebot.NewCarouselColumn(
+			shop.Photo.Mobile.URL,
+			shop.Name,
+			addr,
+			linebot.NewURIAction("ホットペッパーを開く", shop.URLs.PC),
+		).WithImageOptions("#FFFFF")
+		ccs = append(ccs, cc)
 	}
-	return info
+	return ccs
 }
