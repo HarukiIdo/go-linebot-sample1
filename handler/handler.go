@@ -29,9 +29,10 @@ func LineHandler(w http.ResponseWriter, r *http.Request) {
 	// リクエストからBOTのイベントを取得
 	events, err := bot.ParseRequest(r)
 	if err != nil {
-		w.WriteHeader(500)
 		if err == linebot.ErrInvalidSignature {
 			w.WriteHeader(400)
+		} else {
+			w.WriteHeader(500)
 		}
 		return
 	}
