@@ -12,7 +12,3 @@ https://lin.ee/kPL7Ui6
 Backend:Go  
 infra:Heroku  
 API:LINE Messaging API, グルメリサーチAPI（リクルートWebサービス）  
-
-## 開発者向け
-### GoアプリケーションををHerokuにデプロイする
-https://qiita.com/yuki_0920/items/cbdbd5220a6a8b4eef19
